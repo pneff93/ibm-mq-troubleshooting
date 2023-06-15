@@ -1,1 +1,1 @@
-# ibm-mq-troubleshoot
+# IBM MQ Troubleshooting
