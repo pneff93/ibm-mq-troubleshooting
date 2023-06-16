@@ -51,14 +51,12 @@ services:
     container_name: connect
     depends_on:
       - broker
-      - ibmmq
     ports:
       - 8083:8083
     volumes:
+      - ./connect-jars:/connect-jars
+      - ./ibmmq:/ibmmq
       - ./Metrics/jmx-exporter/:/usr/share/jmx-exporter
-      - ./confluentinc-kafka-connect-ibmmq-12.1.2:/usr/share/confluent-hub-components
-      - ./IBM/com.ibm.mq.allclient.jar:/usr/share/confluent-hub-components/confluentinc-kafka-connect-ibmmq/lib/com.ibm.mq.allclient.jar
-      - ./IBM/jms.jar:/usr/share/confluent-hub-components/confluentinc-kafka-connect-ibmmq/lib/jms.jar
     environment:
       CONNECT_BOOTSTRAP_SERVERS: broker:29092
       CONNECT_REST_ADVERTISED_HOST_NAME: connect
@@ -76,6 +74,23 @@ services:
       CONNECT_PLUGIN_PATH: /usr/share/confluent-hub-components
       EXTRA_ARGS:
         -javaagent:/usr/share/jmx-exporter/jmx_prometheus_javaagent-0.18.0.jar=1234:/usr/share/jmx-exporter/connect.yml
+    command:
+      - bash
+      - -c
+      - |
+        apt-get -qq update
+        apt-get clean && rm -rf /tmp/* /var/lib/apt/lists/*
+        confluent-hub install --no-prompt confluentinc/kafka-connect-ibmmq:12.1.2
+        confluent-hub install --no-prompt confluentinc/kafka-connect-ibmmq-sink:2.1.4
+        cp /connect-jars/com.ibm.mq.allclient.jar /usr/share/confluent-hub-components/confluentinc-kafka-connect-ibmmq/lib/com.ibm.mq.allclient.jar
+        cp /connect-jars/jms.jar /usr/share/confluent-hub-components/confluentinc-kafka-connect-ibmmq/lib/jms.jar
+        cp /connect-jars/com.ibm.mq.allclient.jar /usr/share/confluent-hub-components/confluentinc-kafka-connect-ibmmq-sink/lib/com.ibm.mq.allclient.jar
+        cp /connect-jars/jms.jar /usr/share/confluent-hub-components/confluentinc-kafka-connect-ibmmq-sink/lib/jms.jar
+        #
+        echo "Launching Kafka Connect worker"
+        /etc/confluent/docker/run &
+        #
+        sleep infinity
 
   prometheus:
     image: prom/prometheus:main
@@ -99,14 +114,14 @@ services:
       - ./grafana/provisioning/:/etc/grafana/provisioning
 
   ibmmq:
-    image: ibmcom/mq # https://hub.docker.com/r/ibmcom/mq/
+    image: ibmcom/mq:latest
     hostname: ibmmq
     container_name: ibmmq
+    ports:
+      - 1414:1414
+      - 9443:9443
     environment:
       LICENSE: accept
-      MQ_QMGR_NAME: QM1
-      MQ_ADMIN_PASSWORD: passw0rd
-      MQ_APP_PASSWORD: passw0rd
-    ports:
-      - '1414:1414'
-      - '9443:9443'
+      MQ_QMGR_NAME: MQ1
+    volumes:
+      - .:/project
