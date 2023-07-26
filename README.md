@@ -163,3 +163,37 @@ Retrieves additional state information for each of the connectors returned in th
   }
 }
 ```
+
+## Create Heap Dump
+
+We need to get the java process id (pid) --> 127
+
+```shell
+docker exec -it connect bash
+jps
+
+13936 Jps
+127 ConnectDistributed
+```
+
+We create the heap dump
+```shell
+docker exec connect jmap -dump:live,format=b,file=/tmp/connectdump.hprof 127
+
+Dumping heap to /tmp/connectdump.hprof ...
+Heap dump file created [54974008 bytes in 0.338 secs]
+```
+
+We extract the heap dump out of the connect container
+```
+sudo docker cp connect:/tmp/connectdump.hprof .
+```
+
+### Analyze Heap Dump
+
+```shell
+sudo jhat -port 7401 -J-Xmx4G connectdump.hprof
+```
+
+Under `localhost:7401` we can start analyzing it.
+For more information see this [guideline](https://blog.gceasy.io/2015/08/28/jhat-heap-dump-analysis/).
