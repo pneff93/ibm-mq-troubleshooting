@@ -127,3 +127,39 @@ kafka-console-consumer --bootstrap-server localhost:9092 --topic ibmmq --from-be
 _>message1
 _>message2
 ```
+
+## Check Connector and Task Status
+
+All REST endpoints can be found in the [documentation](https://docs.confluent.io/platform/current/connect/references/restapi.html#kconnect-cluster)
+
+```shell
+curl -s -XGET http://localhost:8083/connectors\?expand\=status | jq
+```
+Retrieves additional state information for each of the connectors returned in the API call. The endpoint also returns the status of each of the connectors and its tasks as shown in the ?expand=status example below.
+
+```json
+{
+  "ibmmq-source": {
+    "status": {
+      "name": "ibmmq-source",
+      "connector": {
+        "state": "RUNNING",
+        "worker_id": "connect:8083"
+      },
+      "tasks": [
+        {
+          "id": 0,
+          "state": "RUNNING",
+          "worker_id": "connect:8083"
+        },
+        {
+          "id": 1,
+          "state": "RUNNING",
+          "worker_id": "connect:8083"
+        }
+      ],
+      "type": "source"
+    }
+  }
+}
+```

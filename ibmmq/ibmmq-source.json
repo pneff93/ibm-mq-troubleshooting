@@ -16,5 +16,6 @@
   "name": "ibmmq-source",
   "transforms": "ExtractField",
   "transforms.ExtractField.type":"org.apache.kafka.connect.transforms.ExtractField$Value",
-  "transforms.ExtractField.field":"text"
+  "transforms.ExtractField.field":"text",
+  "tasks.max": "2"
 }
