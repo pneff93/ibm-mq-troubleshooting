@@ -196,4 +196,6 @@ sudo jhat -port 7401 -J-Xmx4G connectdump.hprof
 ```
 
 Under `localhost:7401` we can start analyzing it.
-For more information see this [guideline](https://blog.gceasy.io/2015/08/28/jhat-heap-dump-analysis/).
+For more information, see this [guideline](https://blog.gceasy.io/2015/08/28/jhat-heap-dump-analysis/).
+
+![](heapdump.png)
