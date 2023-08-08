@@ -75,7 +75,7 @@ see all Connect metrics in the corresponding dashboard.
 ![](../connect_memory.png)
 
 To see what are the JVM configuration, we execute `docker top connect`
-displaying an initial memory request of 256 MB and a maximum of 2 GB.
+displaying the initial heap memory request of 256 MB and a maximum of 2 GB.
 ```shell
 java -Xms256M -Xmx2G
 ```
