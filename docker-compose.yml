@@ -2,7 +2,7 @@ version: '2'
 services:
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.4.0
+    image: confluentinc/cp-zookeeper:7.5.0
     hostname: zookeeper
     container_name: zookeeper
     ports:
@@ -18,7 +18,7 @@ services:
         -javaagent:/usr/share/jmx-exporter/jmx_prometheus_javaagent-0.18.0.jar=1234:/usr/share/jmx-exporter/zookeeper.yml
 
   broker:
-    image: confluentinc/cp-server:7.4.0
+    image: confluentinc/cp-server:7.5.0
     hostname: broker
     container_name: broker
     depends_on:
@@ -46,7 +46,7 @@ services:
         -javaagent:/usr/share/jmx-exporter/jmx_prometheus_javaagent-0.18.0.jar=1234:/usr/share/jmx-exporter/broker.yml
 
   connect:
-    image: confluentinc/cp-kafka-connect:7.4.0
+    image: confluentinc/cp-kafka-connect:7.5.0
     hostname: connect
     container_name: connect
     depends_on:
